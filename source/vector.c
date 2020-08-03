@@ -40,11 +40,9 @@ int addVectorElement(Vector *vector, void *newElement)
 	return vector->elementCount;
 }
 
-int setVectorElement(Vector *vector, void *newElement, int index)
+void setVectorElement(Vector *vector, void *newElement, int index)
 {
 	memcpy(getVectorElementPointer(vector, index), newElement, vector->elementSize);
-
-	return vector->elementCount;
 }
 
 void *getVectorElementPointer(Vector *vector, int index)

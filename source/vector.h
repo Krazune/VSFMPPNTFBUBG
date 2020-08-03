@@ -17,7 +17,7 @@ Vector *createSizedVector(int initialElementCount, size_t elementSize);
 
 int addVectorElement(Vector *vector, void *newElement);
 
-int setVectorElement(Vector *vector, void *newElement, int index);
+void setVectorElement(Vector *vector, void *newElement, int index);
 
 void *getVectorElementPointer(Vector *vector, int index);
 
