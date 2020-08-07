@@ -1,6 +1,8 @@
 #include <assert.h>
 
 #include "point_matrix.h"
+#include "matrix.h"
+#include "point.h"
 
 PointMatrix *createPointMatrix(int width, int height)
 {

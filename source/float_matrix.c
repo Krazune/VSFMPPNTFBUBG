@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "float_matrix.h"
+#include "matrix.h"
 
 FloatMatrix *createFloatMatrix(int width, int height)
 {
