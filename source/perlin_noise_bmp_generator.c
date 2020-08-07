@@ -1,0 +1,76 @@
+/*
+	MIT License
+
+	Copyright (c) 2020 Miguel Sousa
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+#include <stdio.h>
+
+#include "perlin_noise_bmp_generator.h"
+#include "perlin_noise_generator.h"
+#include "image.h"
+#include "bmp_generator.h"
+
+static void convertPerlinMatrixToImage(FloatMatrix *perlinNoiseMatrix, Image *image);
+
+FILE *generatePerlinNoiseBMP(char fileName[], int width, int height, int cellSize)
+{
+	FloatMatrix *perlinNoiseMatrix = generatePerlinNoiseMatrix(width, height, cellSize);
+
+	if (perlinNoiseMatrix == NULL)
+	{
+		return NULL;
+	}
+
+	Image *noiseImage = createImage(width, height);
+
+	if (noiseImage == NULL)
+	{
+		freeFloatMatrix(perlinNoiseMatrix);
+
+		return NULL;
+	}
+
+	convertPerlinMatrixToImage(perlinNoiseMatrix, noiseImage);
+
+	freeFloatMatrix(perlinNoiseMatrix);
+
+	FILE *bmp = generateBMP(fileName, noiseImage);
+
+	freeImage(noiseImage);
+
+	return bmp;
+}
+
+static void convertPerlinMatrixToImage(FloatMatrix *perlinNoiseMatrix, Image *image)
+{
+	for (int row = 0; row < image->height; ++row)
+	{
+		for (int column = 0; column < image->width; ++column)
+		{
+			float pointValue = (getMatrixFloat(perlinNoiseMatrix, row, column) + 1) / 2; // Perlin noise is generated in [-1, 1] range, so it must be changed into [0, 1].
+			int8_t colorValue = pointValue * 255;
+
+			ColorRGB newColor = { colorValue, colorValue, colorValue };
+
+			setImageColor(image, row, column, newColor);
+		}
+	}
+}
